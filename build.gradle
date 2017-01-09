@@ -1,0 +1,41 @@
+buildscript {
+   repositories {
+      mavenLocal()
+      mavenCentral()
+   }
+   dependencies {
+      classpath 'de.dynamicfiles.projects.gradle.plugins:javafx-gradle-plugin:8.7.0'
+   }
+}
+
+
+apply plugin:'java'
+apply plugin:'application'
+apply plugin:'javafx-gradle-plugin'
+
+mainClassName = 'com.gordolio.budgie.Main'
+
+group = projectGroup
+version = projectVersion
+sourceCompatibility = projectSourceCompatibility
+
+jfx {
+   mainClass=mainClassName
+   vendor='Gordon Child'
+   appName = 'R2D2 Budgie Trainer'
+   nativeReleaseVersion = version
+}
+
+repositories {
+   mavenLocal()
+   mavenCentral()
+}
+
+dependencies {
+   compile 'ch.qos.logback:logback-classic:1.1.7',
+           'org.apache.commons:commons-lang3:3.5'//,
+           //fileTree(System.properties['java.home']).include('**/jfxrt.jar')
+
+   testCompile 'junit:junit:4.12'
+}
+
