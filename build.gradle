@@ -1,17 +1,20 @@
 buildscript {
-   repositories {
-      mavenLocal()
-      mavenCentral()
-   }
-   dependencies {
-      classpath 'de.dynamicfiles.projects.gradle.plugins:javafx-gradle-plugin:8.7.0'
-   }
+    repositories {
+        maven { url 'http://repo.spring.io/plugins-release' }
+    }
+    dependencies {
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
+    }
 }
 
+plugins {
+    id 'org.springframework.boot' version '1.4.3.RELEASE'
+}
 
+apply plugin:'propdeps'
+apply plugin:'propdeps-idea'
 apply plugin:'java'
 apply plugin:'application'
-apply plugin:'javafx-gradle-plugin'
 
 mainClassName = 'com.gordolio.budgie.Main'
 
@@ -19,26 +22,27 @@ group = projectGroup
 version = projectVersion
 sourceCompatibility = projectSourceCompatibility
 
-jfx {
-   mainClass=mainClassName
-   vendor='Gordon Child'
-   appName = 'R2D2 Budgie Trainer'
-   nativeReleaseVersion = version
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+jar {
+    baseName = projectName
+    version = projectVersion
 }
 
-repositories {
-   mavenLocal()
-   mavenCentral()
+configurations {
+    providedRuntime
 }
 
 dependencies {
-   compile 'ch.qos.logback:logback-classic:1.1.7',
-           'org.apache.commons:commons-lang3:3.5'//,
-           //fileTree(System.properties['java.home']).include('**/jfxrt.jar')
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    compile 'ch.qos.logback:logback-classic:1.1.7'
+    compile 'org.apache.commons:commons-lang3:3.5'
+    compile 'com.mpatric:mp3agic:0.8.3'
+    compile 'com.googlecode.soundlibs:mp3spi:1.9.5.4'
 
-   testCompile 'junit:junit:4.12'
-}
-
-wrapper {
+    testCompile 'junit:junit:4.12'
 }
 

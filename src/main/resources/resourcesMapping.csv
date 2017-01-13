@@ -1,0 +1,5 @@
+/css/**     |classpath:/css/
+/image/**   |classpath:/image/
+/js/**      |classpath:/js/
+/icon/**    |classpath:/icon/
+/fonts/**   |classpath:/fonts/
