@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -35,7 +36,10 @@
         <button type="button" class="btn btn-danger">Danger</button>
         <button type="button" class="btn btn-link">Link</button>
         -->
-        <button type="button" class="btn btn-primary">Play Sound</button>
+        <button id="anySound" type="button" class="btn btn-primary">Play Sound</button>
+        <div th:each="sound : ${sounds}">
+              <button th:text="${sound}" type="button" class="sound btn btn-primary">sound</button>
+        </div>
     </p>
 </div>
 <!-- Latest compiled and minified JavaScript -->
@@ -43,8 +47,12 @@
 <script src="/js/bootstrap.min.js"></script>
 <script>
     $(function(){
-        $("button").click(function() {
-            $.get("/sound");
+        $("#anySound").click(function() {
+            $.get("/anySound");
+        });
+        $("button.sound").click(function() {
+            var name = $(this).html();
+            $.get("/sound?sound=" + name);
         });
     });
 </script>

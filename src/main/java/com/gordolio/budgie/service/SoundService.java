@@ -26,18 +26,18 @@ public class SoundService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SoundService.class);
 
-    private static final List<String> FILE_NAMES = new ArrayList<>();
+    public static final List<String> FILE_NAMES = new ArrayList<>();
     private static final Map<String,byte[]> SOUNDS = new HashMap<>();
     static {
         try {
             getResourceFiles("/sounds/")
                     .stream()
-                    .map(v->"/sounds/"+v)
+                    .map(v->v.replace(".wav",""))
                     .forEach(f->{
                         try {
                             FILE_NAMES.add(f);
                             ByteArrayOutputStream output = new ByteArrayOutputStream();
-                            InputStream inputStream = SoundService.class.getResourceAsStream(f);
+                            InputStream inputStream = SoundService.class.getResourceAsStream("/sounds/" + f + ".wav");
                             byte[] buffer = new byte[2048];
                             int bytesRead;
                             while (-1 != (bytesRead = inputStream.read(buffer))) {
@@ -54,7 +54,7 @@ public class SoundService {
         }
     }
 
-    public void playSound() {
+    public void playAnySound() {
         String file = FILE_NAMES.get(RandomUtils.nextInt(0, FILE_NAMES.size()));
         this.playWav(file);
     }
