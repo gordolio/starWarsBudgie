@@ -1,12 +1,15 @@
 package com.gordolio.budgie.service;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -23,20 +26,36 @@ public class SoundService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SoundService.class);
 
-    private static final List<String> FILES = new ArrayList<>();
+    private static final List<String> FILE_NAMES = new ArrayList<>();
+    private static final Map<String,byte[]> SOUNDS = new HashMap<>();
     static {
         try {
-            FILES.addAll(getResourceFiles("/sounds/")
+            getResourceFiles("/sounds/")
                     .stream()
                     .map(v->"/sounds/"+v)
-                    .collect(Collectors.toList()));
+                    .forEach(f->{
+                        try {
+                            FILE_NAMES.add(f);
+                            ByteArrayOutputStream output = new ByteArrayOutputStream();
+                            InputStream inputStream = SoundService.class.getResourceAsStream(f);
+                            byte[] buffer = new byte[2048];
+                            int bytesRead;
+                            while (-1 != (bytesRead = inputStream.read(buffer))) {
+                                output.write(buffer, 0, bytesRead);
+                            }
+                            SOUNDS.put(f, output.toByteArray());
+                            inputStream.close();
+                        } catch (Exception ex) {
+                            LOG.error("Could not read sound files", ex);
+                        }
+                    });
         }catch(Exception ex) {
             LOG.error("could not load files", ex);
         }
     }
 
     public void playSound() {
-        String file = FILES.get(RandomUtils.nextInt(0, FILES.size()));
+        String file = FILE_NAMES.get(RandomUtils.nextInt(0, FILE_NAMES.size()));
         this.playWav(file);
     }
 
@@ -44,10 +63,11 @@ public class SoundService {
         new Thread(() -> {
             try {
                 Clip clip = AudioSystem.getClip();
-                AudioInputStream inputStream = AudioSystem.getAudioInputStream(
-                        SoundService.class.getResourceAsStream(file));
+                ByteArrayInputStream audioBytes = new ByteArrayInputStream(SOUNDS.get(file));
+                AudioInputStream inputStream = AudioSystem.getAudioInputStream(audioBytes);
                 clip.open(inputStream);
                 clip.start();
+                inputStream.close();
             } catch (Exception e) {
                 LOG.error("Error playing sound: " + file, e);
             }
