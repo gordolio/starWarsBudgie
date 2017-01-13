@@ -49,7 +49,7 @@ public class SoundService {
                 clip.open(inputStream);
                 clip.start();
             } catch (Exception e) {
-                LOG.error("Error playing sound", e);
+                LOG.error("Error playing sound: " + file, e);
             }
         }).start();
     }
