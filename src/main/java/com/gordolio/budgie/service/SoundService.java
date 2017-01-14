@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineEvent;
 
 import org.apache.commons.lang3.RandomUtils;
 import org.slf4j.Logger;
@@ -64,11 +65,15 @@ public class SoundService implements InitializingBean {
         new Thread(() -> {
             try {
                 Clip clip = AudioSystem.getClip();
+                clip.addLineListener(event -> {
+                    if(LineEvent.Type.STOP.equals(event.getType())) {
+                        clip.close();
+                    }
+                });
                 ByteArrayInputStream audioBytes = new ByteArrayInputStream(SOUNDS.get(file));
                 AudioInputStream inputStream = AudioSystem.getAudioInputStream(audioBytes);
                 clip.open(inputStream);
                 clip.start();
-                inputStream.close();
             } catch (Exception e) {
                 LOG.error("Error playing sound: " + file, e);
             }
