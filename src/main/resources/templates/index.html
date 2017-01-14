@@ -51,7 +51,7 @@
             $.get("/anySound");
         });
         $("button.sound").click(function() {
-            var name = $(this).html();
+            var name = encodeURIComponent($(this).text());
             $.get("/sound?sound=" + name);
         });
     });
